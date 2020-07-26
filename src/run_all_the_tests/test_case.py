@@ -139,19 +139,13 @@ class TestCase(NamedTuple):
     pytest_filter: str
     group: Group
 
-    def __str__(self):
-        return (
-            f"{self.test_case_path.project_root}::"
-            f"{self.test_case_path.test_case_relative_to_project_root}"
-        )
-
     @classmethod
     def gen_test_case(
         cls,
         test_case_path: TestCasePath,
-        test_types: Tuple[TestType, ...] = TestType.all_test_types(),
-        pytest_filter: str = None,
         group: Group = Group.ONE,
+        pytest_filter: str = None,
+        test_types: Tuple[TestType, ...] = TestType.all_test_types(),
     ) -> "TestCase":
         """
         This TestCase generator expects the test_case to be a fragment from the project root to the test script.
@@ -159,9 +153,9 @@ class TestCase(NamedTuple):
         value. That path is checked to ensure that a file by that 'full_test_case_path' exits.
 
         :param test_case_path:
-        :param test_types:
-        :param pytest_filter: pytest -k string
         :param group:
+        :param pytest_filter: pytest -k string
+        :param test_types: for exceptional situations, limit a TestCase to run for limited set of TestType's
 
         :return: test case paths object
 
@@ -174,6 +168,12 @@ class TestCase(NamedTuple):
             raise RuntimeError(f"filter {pytest_filter} may only be used for pytests.")
 
         return TestCase(test_case_path, test_types, pytest_filter, group)
+
+    def __str__(self):
+        return (
+            f"{self.test_case_path.project_root}::"
+            f"{self.test_case_path.test_case_relative_to_project_root}"
+        )
 
     def python_command(self, test_type: TestType) -> Optional[str]:
         command = test_type.python_command(self._is_script)

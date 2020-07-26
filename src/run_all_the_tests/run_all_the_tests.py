@@ -1,8 +1,10 @@
 """
-Run a series of test invocation making sure each test case works with both 'pytest' and 'python -m pytest' over all
-working directories between the project root and the directory containing the test script.
+Run a series of test invocation making sure each test case works with both 'pytest' and
+ 'python -m pytest' over all working directories between the project root and the directory
+  containing the test script.
 
-Each 'Group' set of tests are run in parallel (default is all parallel).  Separate tests into non-conflicting groups.
+Each 'Group' set of tests are run in parallel (default is all parallel).  Separate tests
+ into non-conflicting groups.
 """
 import os
 import shlex
