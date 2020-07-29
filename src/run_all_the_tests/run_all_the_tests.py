@@ -14,7 +14,7 @@ from os import PathLike
 from pathlib import Path, PurePath
 from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, Tuple
 
-from run_all_the_tests import Group, TestType, TestCase
+from . import Group, TestType, TestCase
 
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({"PYTHONDONTWRITEBYTECODE": "-1"})

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "run-all-the-tests"
-version = "0.1.1"
+version = "0.1.5"
 authors = ["Greg Kedge <gregwork@kedges.com>"]
 description = "Make sure both 'python -m pytest' and 'pytest' run your tests."
 readme = "README.md"
@@ -30,10 +30,9 @@ include = '\.pyi?$'
 
 [tool.poetry.dependencies]
 python = "^3.6"
-black = {extras = ["d"], version = "^19.10b0"}
 
 [tool.poetry.dev-dependencies]
-black = "^19.10b0"
+black = {extras = ["d"], version = "^19.10b0"}
 pytest = "^5.4.3"
 wheel = "tox-wheel"
 

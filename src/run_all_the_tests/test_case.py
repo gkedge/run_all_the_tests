@@ -47,6 +47,19 @@ class TestCasePath:
     def is_dir_test_case(self) -> bool:
         return self.full_test_case_path.is_dir()
 
+    @property
+    def is_test_case(self) -> bool:
+        return (
+            self.full_test_case_path.stem.startswith("test_") or self.is_dir_test_case
+        )
+
+    @property
+    def is_script(self) -> bool:
+        return (
+            self.full_test_case_path.stem.startswith("run_")
+            and not self.is_dir_test_case
+        )
+
     def check_test_case_path(self) -> None:
         full_test_case_path: Path = self.full_test_case_path
         if not full_test_case_path.exists():
@@ -95,6 +108,9 @@ class TestType(Enum):
     def is_pytest(self) -> bool:
         return self in [TestType.PYTEST, TestType.PYTHON_PYTEST]
 
+    def is_python(self) -> bool:
+        return self == TestType.PYTHON
+
     def python_command(self, is_script: bool) -> Optional[str]:
         command: Optional[str] = None
         if self.is_pytest():
@@ -116,6 +132,12 @@ class TestType(Enum):
         original_types: Tuple["TestType", ...]
     ) -> Tuple["TestType", ...]:
         return tuple(test_type for test_type in original_types if test_type.is_pytest())
+
+    @staticmethod
+    def only_script_types(
+        original_types: Tuple["TestType", ...]
+    ) -> Tuple["TestType", ...]:
+        return tuple(test_type for test_type in original_types if test_type.is_python())
 
     @staticmethod
     def is_only_pytest_types(original_types: Tuple["TestType", ...]) -> bool:
@@ -161,11 +183,13 @@ class TestCase(NamedTuple):
 
         """
 
-        if test_case_path.is_dir_test_case:
+        if test_case_path.is_test_case:
             test_types = TestType.only_pytest_types(test_types)
+        elif test_case_path.is_script:
+            test_types = TestType.only_script_types(test_types)
 
         if pytest_filter and not TestType.is_only_pytest_types(test_types):
-            raise RuntimeError(f"filter {pytest_filter} may only be used for pytests.")
+            raise RuntimeError(f"filter {pytest_filter} may only be used for pytest's.")
 
         return TestCase(test_case_path, test_types, pytest_filter, group)
 
