@@ -14,7 +14,7 @@ from os import PathLike
 from pathlib import Path, PurePath
 from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, Tuple
 
-from . import Group, TestType, TestCase
+from run_all_the_tests.test_case import Group, TestType, TestCase
 
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({"PYTHONDONTWRITEBYTECODE": "-1"})
@@ -56,10 +56,12 @@ def _run_pytest(
 
     None: is returned if the test case can't be run with the requested test_type.
 
-    :param test_type: enum to determine if a pytest (or a python-pytest) or a regular runnable script
+    :param test_type: enum to determine if a pytest (or a python-pytest) or
+     a regular runnable script
     :param work_directory: working directory from whence the script is run
     :param test_case: manage test case paths relative to project root and current working directory
-    :return: a _RunningTestCase containing reference to the running process(Popen object) and data associated with
+    :return: a _RunningTestCase containing reference to the running process(Popen object)
+     and data associated with
     how the process was started
     """
 

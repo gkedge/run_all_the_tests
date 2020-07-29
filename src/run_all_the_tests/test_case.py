@@ -78,8 +78,8 @@ class TestCasePath:
         # The path fragment between the project_root and the directory containing the script.
         test_path: PurePath = test_path.relative_to(self._project_root)
 
-        # Create a list of full paths for every directory between the project_root and the directory containing the
-        # script.
+        # Create a list of full paths for every directory between the project_root and
+        # the directory containing the script.
         working_directories: [PurePath] = [self._project_root]
         for next_part in test_path.parts:
             working_directories.append(self._project_root / next_part)
@@ -150,9 +150,10 @@ class TestType(Enum):
 
 class TestCase(NamedTuple):
     """
-    A Test Case represents a full path to the test script.  The project root directory is used to derive paths from
-    the project root to the script.  Those paths are used to determine the working directory to start each test to
-    validate that a test script can be run from any directory between the project's root to the script.
+    A Test Case represents a full path to the test script.  The project root directory is used
+     to derive paths from the project root to the script.  Those paths are used to determine
+     the working directory to start each test to validate that a test script can be run from any
+     directory between the project's root to the script.
     """
 
     # full_test_case_path can be a file or directory containing test cases
@@ -170,14 +171,17 @@ class TestCase(NamedTuple):
         test_types: Tuple[TestType, ...] = TestType.all_test_types(),
     ) -> "TestCase":
         """
-        This TestCase generator expects the test_case to be a fragment from the project root to the test script.
-        The project_root is prepended to the test_case and provided as the 'TestCase.full_test_case_path'
-        value. That path is checked to ensure that a file by that 'full_test_case_path' exits.
+        This TestCase generator expects the test_case to be a fragment from the
+         project root to the test script. The project_root is prepended to the
+         test_case and provided as the TestCase.full_test_case_path'
+         value. That path is checked to ensure that a file by that
+         'full_test_case_path' exits.
 
         :param test_case_path:
         :param group:
         :param pytest_filter: pytest -k string
-        :param test_types: for exceptional situations, limit a TestCase to run for limited set of TestType's
+        :param test_types: for exceptional situations, limit a TestCase to
+         run for limited set of TestType's
 
         :return: test case paths object
 
@@ -232,7 +236,8 @@ class TestCase(NamedTuple):
     def _is_script(self) -> bool:
         """
         Determine if the test case is a script that is run (not a pytest).
-        A script that is simply run by Python is a file that begins with 'run_' and isn't a directory)
+         A script that is simply run by Python is a file that begins with 'run_'
+         and isn't a directory)
         :return: True/False
         """
         return (
