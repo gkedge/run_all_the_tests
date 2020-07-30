@@ -9,6 +9,7 @@ Each 'Group' set of tests are run in parallel (default is all parallel).  Separa
 import os
 import shlex
 import subprocess
+import time
 
 from os import PathLike
 from pathlib import Path, PurePath
@@ -102,6 +103,7 @@ def _get_group_tests(
 
 
 def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
+    start_time: float = time.perf_counter()
     running_test_cases: List[_RunningTestCase] = []
     test_count: int = 0
     tests_passed: int = 0
@@ -142,6 +144,11 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
         running_test_cases.clear()
 
     if tests_passed == test_count:
-        print(f"\nAll {test_count} tests passed!")
+        print(
+            f"\nAll {test_count} tests passed! ({time.perf_counter() - start_time}sec)"
+        )
     else:
-        print(f"\n{tests_passed} tests out of {test_count} passed ")
+        print(
+            f"\n{tests_passed} tests out of {test_count} passed "
+            f"({time.perf_counter() - start_time}sec)"
+        )
