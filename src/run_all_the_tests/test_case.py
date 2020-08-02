@@ -1,6 +1,6 @@
-from enum import IntEnum, auto, Enum
+from enum import IntEnum, auto, Enum, EnumMeta
 from pathlib import PurePath, Path
-from typing import List, Optional, Tuple, NamedTuple
+from typing import List, Optional, NamedTuple, FrozenSet
 
 
 class TestCasePath:
@@ -96,7 +96,17 @@ class Group(IntEnum):
     SEVEN = auto()
 
 
-class TestType(Enum):
+class TestTypeProperties(EnumMeta):
+    @property
+    def all_test_types(cls) -> FrozenSet["TestType"]:
+        return cls._all_test_types
+
+    @all_test_types.setter
+    def all_test_types(cls, all_test_types: FrozenSet["TestType"]) -> None:
+        cls._all_test_types = all_test_types
+
+
+class TestType(Enum, metaclass=TestTypeProperties):
     """
     TestType enum
     """
@@ -105,47 +115,53 @@ class TestType(Enum):
     PYTHON_PYTEST = auto()
     PYTHON = auto()
 
+    @property
     def is_pytest(self) -> bool:
         return self in [TestType.PYTEST, TestType.PYTHON_PYTEST]
 
+    @property
     def is_python(self) -> bool:
         return self == TestType.PYTHON
 
-    def python_command(self, is_script: bool) -> Optional[str]:
+    @property
+    def python_command(self) -> Optional[str]:
         command: Optional[str] = None
-        if self.is_pytest():
+        if self.is_pytest:
             if self == TestType.PYTEST:
                 command = "pytest"
             else:
                 command = "python -B -m pytest"
-        elif is_script:
+        elif self.is_python:
             command = "python -B"
 
         return command
 
     @staticmethod
-    def all_test_types() -> Tuple["TestType", ...]:
-        return tuple(test_type for test_type in TestType)
-
-    @staticmethod
     def only_pytest_types(
-        original_types: Tuple["TestType", ...]
-    ) -> Tuple["TestType", ...]:
-        return tuple(test_type for test_type in original_types if test_type.is_pytest())
+        original_types: FrozenSet["TestType"],
+    ) -> FrozenSet["TestType"]:
+        return frozenset(
+            test_type for test_type in original_types if test_type.is_pytest
+        )
 
     @staticmethod
     def only_script_types(
-        original_types: Tuple["TestType", ...]
-    ) -> Tuple["TestType", ...]:
-        return tuple(test_type for test_type in original_types if test_type.is_python())
+        original_types: FrozenSet["TestType"],
+    ) -> FrozenSet["TestType"]:
+        return frozenset(
+            test_type for test_type in original_types if test_type.is_python
+        )
 
     @staticmethod
-    def is_only_pytest_types(original_types: Tuple["TestType", ...]) -> bool:
+    def is_only_pytest_types(original_types: FrozenSet["TestType"]) -> bool:
         for test_type in original_types:
-            if not test_type.is_pytest():
+            if not test_type.is_pytest:
                 return False
 
         return True
+
+
+TestTypeProperties.all_test_types = frozenset(TestType)
 
 
 class TestCase(NamedTuple):
@@ -158,7 +174,7 @@ class TestCase(NamedTuple):
 
     # full_test_case_path can be a file or directory containing test cases
     test_case_path: TestCasePath
-    test_types: Tuple[TestType]
+    test_types: FrozenSet[TestType]
     pytest_filter: str
     group: Group
 
@@ -168,7 +184,7 @@ class TestCase(NamedTuple):
         test_case_path: TestCasePath,
         group: Group = Group.ONE,
         pytest_filter: str = None,
-        test_types: Tuple[TestType, ...] = TestType.all_test_types(),
+        test_types: FrozenSet[TestType] = TestType.all_test_types,
     ) -> "TestCase":
         """
         This TestCase generator expects the test_case to be a fragment from the
@@ -204,8 +220,8 @@ class TestCase(NamedTuple):
         )
 
     def python_command(self, test_type: TestType) -> Optional[str]:
-        command = test_type.python_command(self._is_script)
-        if command and test_type.is_pytest() and self.pytest_filter:
+        command = test_type.python_command
+        if command and test_type.is_pytest and self.pytest_filter:
             command = f'{command} -k "{self.pytest_filter}"'
 
         return command
