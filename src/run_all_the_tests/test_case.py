@@ -80,9 +80,11 @@ class TestCasePath:
 
         # Create a list of full paths for every directory between the project_root and
         # the directory containing the script.
-        working_directories: [PurePath] = [self._project_root]
+        working_directory: PurePath = self._project_root
+        working_directories: [PurePath] = [working_directory]
         for next_part in test_path.parts:
-            working_directories.append(self._project_root / next_part)
+            working_directory = working_directory / next_part
+            working_directories.append(working_directory)
         return working_directories
 
 
@@ -219,27 +221,6 @@ class TestCase(NamedTuple):
             f"{self.test_case_path.test_case_relative_to_project_root}"
         )
 
-    def python_command(self, test_type: TestType) -> Optional[str]:
-        command = test_type.python_command
-        if command and test_type.is_pytest and self.pytest_filter:
-            command = f'{command} -k "{self.pytest_filter}"'
-
-        return command
-
-    def test_case_relative_to_cwd(self, working_directory: PurePath) -> PurePath:
-        return self.test_case_path.test_case_relative_to(working_directory)
-
-    def cwd_relative_to_project(self, working_directory: PurePath) -> PurePath:
-        """
-        This method may seem odd, but submodules will have a different project roots
-        than the top-level project root.
-
-        :param working_directory: absolute path to cwd
-        :return: working directory relative to the test case's project_root
-        """
-
-        return self.test_case_path.test_case_relative_to_project(working_directory)
-
     @property
     def working_directories(self) -> List[PurePath]:
         """
@@ -260,3 +241,24 @@ class TestCase(NamedTuple):
             self.test_case_path.full_test_case_path.stem.startswith("run_")
             and not self.test_case_path.is_dir_test_case
         )
+
+    def python_command(self, test_type: TestType) -> Optional[str]:
+        command = test_type.python_command
+        if command and test_type.is_pytest and self.pytest_filter:
+            command = f'{command} -k "{self.pytest_filter}"'
+
+        return command
+
+    def test_case_relative_to_cwd(self, working_directory: PurePath) -> PurePath:
+        return self.test_case_path.test_case_relative_to(working_directory)
+
+    def cwd_relative_to_project(self, working_directory: PurePath) -> PurePath:
+        """
+        This method may seem odd, but submodules will have a different project roots
+        than the top-level project root.
+
+        :param working_directory: absolute path to cwd
+        :return: working directory relative to the test case's project_root
+        """
+
+        return self.test_case_path.test_case_relative_to_project(working_directory)
