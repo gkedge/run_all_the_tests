@@ -49,7 +49,7 @@ class _RunningTestCase(NamedTuple):
         return f"{which_test_how} from {self.cwd}"
 
 
-def _run_pytest(
+def _run_test(
     test_type: TestType, work_directory: PurePath, test_case: TestCase
 ) -> Optional[_RunningTestCase]:
     """
@@ -97,9 +97,9 @@ def _run_pytest(
 
 
 def _get_group_tests(
-    test_case_paths: Tuple[TestCase, ...], group: Group
+    test_cases: Tuple[TestCase, ...], group: Group
 ) -> Tuple[TestCase, ...]:
-    return tuple(tcp for tcp in test_case_paths if group == tcp.group)
+    return tuple(tcp for tcp in test_cases if group == tcp.group)
 
 
 def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
@@ -117,7 +117,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                     continue
                 # ... changing the work dir from the project root to directory containing script
                 for working_directory in test_case.working_directories:
-                    running_test_case = _run_pytest(
+                    running_test_case = _run_test(
                         test_type, working_directory, test_case
                     )
                     if running_test_case:
