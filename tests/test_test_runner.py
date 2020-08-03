@@ -14,7 +14,7 @@ def test__get_group_tests(test_case, test_script_case):
     assert _get_group_tests(test_cases, Group.TWO) == tuple()
 
 
-def test__run_pytest(project_path, test_case):
+def test__run_test(project_path, test_case):
     running_test_case: _RunningTestCase = _run_test(
         TestType.PYTEST, Path.cwd(), test_case
     )

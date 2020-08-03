@@ -16,7 +16,10 @@ if __name__ == "__main__":
 
     all_test_cases: Tuple[TestCase, ...] = (
         TestCase.gen_test_case(gen_test_case_path("tests/test_case/test_test_type.py")),
-        TestCase.gen_test_case(gen_test_case_path("tests/test_case/test_test_path.py")),
+        TestCase.gen_test_case(
+            gen_test_case_path("tests/test_case/test_test_path.py"),
+            wait_between_test_types=True,
+        ),
         TestCase.gen_test_case(gen_test_case_path("tests/test_case/test_test_case.py")),
         TestCase.gen_test_case(gen_test_case_path("tests/test_case")),
         TestCase.gen_test_case(gen_test_case_path("tests/test_test_runner.py")),

@@ -10,7 +10,6 @@ import os
 import shlex
 import subprocess
 import time
-
 from os import PathLike
 from pathlib import Path, PurePath
 from typing import List, Union, Sequence, Dict, NamedTuple, NewType, Optional, Tuple
@@ -32,8 +31,12 @@ class _RunningTestCase(NamedTuple):
 
     group: Group
     test_type: TestType
+    time_to_wait: float
     cwd: PurePath
     process: Optional[subprocess.Popen]
+
+    def wait_until_test_finished(self) -> int:
+        return self.process.wait(self.time_to_wait)
 
     def __str__(self) -> str:
         args: POpenArgs = self.process.args
@@ -92,7 +95,11 @@ def _run_test(
     )
 
     return _RunningTestCase(
-        test_case.group, test_type, cwd_relative_to_test_case_project, process
+        test_case.group,
+        test_type,
+        test_case.time_to_wait,
+        cwd_relative_to_test_case_project,
+        process,
     )
 
 
@@ -112,34 +119,37 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
     for group in Group:
         for test_case in _get_group_tests(test_cases, group):
             # ... over all test_case types
+            test_type_count = len(TestType.all_test_types) - 1
             for test_type in TestType:
+                test_type_count -= 1
                 if test_type not in test_case.test_types:
                     continue
                 # ... changing the work dir from the project root to directory containing script
-                for working_directory in test_case.working_directories:
+                working_directories = test_case.working_directories
+                working_directory_count = len(working_directories) - 1
+                for working_directory in working_directories:
+                    working_directory_count -= 1
                     running_test_case = _run_test(
                         test_type, working_directory, test_case
                     )
-                    if running_test_case:
-                        running_test_cases.append(running_test_case)
 
-        test_count += len(running_test_cases)
+                    if running_test_case:
+                        test_count += 1
+                        if test_case.is_dir_test_case or (
+                            test_case.is_wait_between_test_types
+                            and test_type_count > 0
+                            and working_directory_count > 0
+                        ):
+                            print(f"Waiting...")
+                            tests_passed = report_on_test(
+                                running_test_case, tests_passed
+                            )
+                        else:
+                            running_test_cases.append(running_test_case)
+
         # Print them out when each complete (in order)
         for running_test_case in running_test_cases:
-            if running_test_case.process.wait() != 0:
-                print(f"\nCompleted (w/ error): {running_test_case}\n\t")
-                # pylint: disable=expression-not-assigned
-                [
-                    print(f"\t{line}", end="")
-                    for line in running_test_case.process.stdout
-                ]
-                # pylint: enable=expression-not-assigned
-            print(f"\nCompleted: {running_test_case}\n\t")
-            # pylint: disable=expression-not-assigned
-            [print(f"\t{line}", end="") for line in running_test_case.process.stdout]
-            # pylint: enable=expression-not-assigned
-
-            tests_passed += 1
+            tests_passed = report_on_test(running_test_case, tests_passed)
 
         running_test_cases.clear()
 
@@ -152,3 +162,20 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
             f"\n{tests_passed} tests out of {test_count} passed "
             f"({time.perf_counter() - start_time}sec)"
         )
+
+
+def report_on_test(running_test_case, tests_passed):
+    if running_test_case.wait_until_test_finished() != 0:
+        print(f"\nCompleted (w/ error): {running_test_case}\n\t")
+        # pylint: disable=expression-not-assigned
+        [print(f"\t{line}", end="") for line in running_test_case.process.stdout]
+        # pylint: enable=expression-not-assigned
+    else:
+        tests_passed += 1
+
+    print(f"\nCompleted: {running_test_case}\n\t")
+    # pylint: disable=expression-not-assigned
+    [print(f"\t{line}", end="") for line in running_test_case.process.stdout]
+    # pylint: enable=expression-not-assigned
+
+    return tests_passed

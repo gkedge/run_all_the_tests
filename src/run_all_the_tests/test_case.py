@@ -179,6 +179,8 @@ class TestCase(NamedTuple):
     test_types: FrozenSet[TestType]
     pytest_filter: str
     group: Group
+    wait_between_test_types: bool
+    wait_time_between_test_types: float
 
     @classmethod
     def gen_test_case(
@@ -187,6 +189,8 @@ class TestCase(NamedTuple):
         group: Group = Group.ONE,
         pytest_filter: str = None,
         test_types: FrozenSet[TestType] = TestType.all_test_types,
+        wait_between_test_types: bool = False,
+        wait_time_between_test_types: float = 3.0,
     ) -> "TestCase":
         """
         This TestCase generator expects the test_case to be a fragment from the
@@ -200,6 +204,9 @@ class TestCase(NamedTuple):
         :param pytest_filter: pytest -k string
         :param test_types: for exceptional situations, limit a TestCase to
          run for limited set of TestType's
+        :param wait_between_test_types: when there are multiple tests types (pytest'ing), wait until each type is
+         done prior to running the next type
+        :param wait_time_between_test_types: if is_wait_between_test_types, the time to wait
 
         :return: test case paths object
 
@@ -213,7 +220,14 @@ class TestCase(NamedTuple):
         if pytest_filter and not TestType.is_only_pytest_types(test_types):
             raise RuntimeError(f"filter {pytest_filter} may only be used for pytest's.")
 
-        return TestCase(test_case_path, test_types, pytest_filter, group)
+        return TestCase(
+            test_case_path,
+            test_types,
+            pytest_filter,
+            group,
+            wait_between_test_types,
+            wait_time_between_test_types,
+        )
 
     def __str__(self):
         return (
@@ -241,6 +255,18 @@ class TestCase(NamedTuple):
             self.test_case_path.full_test_case_path.stem.startswith("run_")
             and not self.test_case_path.is_dir_test_case
         )
+
+    @property
+    def time_to_wait(self) -> float:
+        return self.wait_time_between_test_types
+
+    @property
+    def is_wait_between_test_types(self) -> bool:
+        return self.wait_between_test_types
+
+    @property
+    def is_dir_test_case(self) -> bool:
+        return self.test_case_path.is_dir_test_case
 
     def python_command(self, test_type: TestType) -> Optional[str]:
         command = test_type.python_command
