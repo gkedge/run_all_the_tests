@@ -126,7 +126,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                     continue
                 # ... changing the work dir from the project root to directory containing script
                 working_directories = test_case.working_directories
-                working_directory_count = len(working_directories) - 1
+                working_directory_count = len(working_directories)
                 for working_directory in working_directories:
                     working_directory_count -= 1
                     running_test_case = _run_test(
@@ -137,8 +137,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                         test_count += 1
                         if test_case.is_dir_test_case or (
                             test_case.is_wait_between_test_types
-                            and test_type_count > 0
-                            and working_directory_count > 0
+                            and (test_type_count > 0 or working_directory_count > 0)
                         ):
                             print(f"Waiting...")
                             tests_passed = report_on_test(
