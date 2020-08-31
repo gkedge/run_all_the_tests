@@ -24,7 +24,7 @@ class TestCasePath:
     @property
     def full_test_case_path(self) -> Path:
         project_root: Path = Path(self._project_root).absolute()
-        full_test_case_path: Path = (project_root / self._test_case)
+        full_test_case_path: Path = project_root / self._test_case
         return full_test_case_path
 
     @property
@@ -204,12 +204,11 @@ class TestCase(NamedTuple):
         :param pytest_filter: pytest -k string
         :param test_types: for exceptional situations, limit a TestCase to
          run for limited set of TestType's
-        :param wait_between_test_types: when there are multiple tests types (pytest'ing), wait until each type is
-         done prior to running the next type
+        :param wait_between_test_types: when there are multiple tests types (pytest'ing),
+         wait until each type is done prior to running the next type
         :param wait_time_between_test_types: if is_wait_between_test_types, the time to wait
 
         :return: test case paths object
-
         """
 
         if test_case_path.is_test_case:

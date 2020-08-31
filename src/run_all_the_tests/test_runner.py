@@ -139,7 +139,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                             test_case.is_wait_between_test_types
                             and (test_type_count > 0 or working_directory_count > 0)
                         ):
-                            print(f"Waiting...")
+                            print("Waiting...")
                             tests_passed = report_on_test(
                                 running_test_case, tests_passed
                             )

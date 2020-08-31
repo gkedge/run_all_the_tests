@@ -22,16 +22,17 @@ classifiers = [
 
 [tool.pylint.basic]
 good-names = "ii,jj,kk,ex,_"
-#init-hook = 'from pylint.config import find_pylintrc; from pathlib import Path; import sys;\
-#        project_dir = Path(find_pylintrc()).parent;\
-#        sys.path.append(Path(project_dir, "src"));\
-#        sys.path.append(Path(project_dir, "tests/test_subproject/src"));\
-#        sys.path.append(Path(project_dir, "tests/test_subproject/test_subproject_subproject"))'
+init-hook = """
+from pylint.config import find_pylintrc; from pathlib import Path; import sys;
+project_dir = Path(find_pylintrc()).parent;
+sys.path.append(Path(project_dir, "src"))"""
 
 ignore = "build, dist"
 
 [tool.pylint.messages_control]
-disable = "bad-continuation, missing-module-docstring, missing-function-docstring, missing-class-docstring"
+[tool.pylint.'MESSAGES CONTROL']
+disable = """bad-continuation, missing-module-docstring, missing-function-docstring,
+missing-class-docstring"""
 
 [tool.pylint.format]
 max-line-length = "100"
