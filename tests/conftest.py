@@ -4,8 +4,13 @@ import sys
 import pytest
 
 PROJECT_PATH = Path(__file__).parent.parent.absolute()
-assert str(PROJECT_PATH / "src") not in sys.path
-sys.path.append(str(PROJECT_PATH / "src"))
+PROJECT_PATH_SRC = PROJECT_PATH / "src"
+# Totally unexpected that this project's `src` path would ever be in `sys.path` at this point!
+# But, poetry is indeed adding it, surprisingly:
+# https://github.com/python-poetry/poetry/issues/1729
+# assert str(PROJECT_PATH / "src") not in sys.path, f"{sys.path}"
+if PROJECT_PATH_SRC.is_dir() and str(PROJECT_PATH_SRC) not in sys.path:
+    sys.path.append(str(PROJECT_PATH_SRC))
 
 # pylint: disable=wrong-import-position
 from run_all_the_tests import TestCasePath, TestCase

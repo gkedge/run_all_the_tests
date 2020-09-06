@@ -20,6 +20,8 @@ def test_working_directories(project_path, test_case):
 def test__is_script(test_case, test_script_case):
     assert not test_case._is_script
     assert test_script_case._is_script
+
+
 # pylint: enable:protected-access
 
 
