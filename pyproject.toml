@@ -37,6 +37,7 @@ pytest = "~5.*"
 pytest-dependency = "^0.5.1"
 wheel = "tox-wheel"
 wrapt = "^1.12.1"
+mypy = "^0.782"
 
 [tool.pylint.master]
 good-names = "ii,jj,kk,ex,_"
