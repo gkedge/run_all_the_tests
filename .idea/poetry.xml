@@ -4,6 +4,8 @@
     <option name="poetryVirtualenvPaths">
       <set>
         <option value="$USER_HOME$/Library/Caches/pypoetry/virtualenvs/run-all-the-tests-VQ-_AYjK-py3.7/bin/python" />
+        <option value="$USER_HOME$/.pyenv/versions/3.7.8/bin/python" />
+        <option value="$PROJECT_DIR$/.venv/bin/python" />
       </set>
     </option>
   </component>

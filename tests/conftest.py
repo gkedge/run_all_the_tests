@@ -7,7 +7,10 @@ PROJECT_PATH = Path(__file__).parent.parent.absolute()
 assert str(PROJECT_PATH / "src") not in sys.path
 sys.path.append(str(PROJECT_PATH / "src"))
 
+# pylint: disable=wrong-import-position
 from run_all_the_tests import TestCasePath, TestCase
+
+# pylint: enable=wrong-import-position
 
 sys.dont_write_bytecode = True
 

@@ -193,10 +193,10 @@ class TestCase(NamedTuple):
         wait_time_between_test_types: float = 3.0,
     ) -> "TestCase":
         """
-        This TestCase generator expects the test_case to be a fragment from the
-         project root to the test script. The project_root is prepended to the
-         test_case and provided as the TestCase.full_test_case_path'
-         value. That path is checked to ensure that a file by that
+        This TestCase generator expects the test_case_path to be a path fragment from the project
+         root to the test script. The project_root is prepended to the test_case and provided as
+         the TestCase.full_test_case_path'  value. That path is checked to ensure that a file by
+         that
          'full_test_case_path' exits.
 
         :param test_case_path:

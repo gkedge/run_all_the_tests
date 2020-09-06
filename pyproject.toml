@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "run-all-the-tests"
-version = "0.1.17"
+version = "0.1.18"
 authors = ["Greg Kedge <gregwork@kedges.com>"]
 description = "Make sure both 'python -m pytest' and 'pytest' run your tests."
 readme = "README.md"
@@ -11,31 +11,14 @@ keywords = ["testing", "pytest", "sys.path", "packaging", "dependency", "pyproje
 include = ["docs/**/*", "src/run_all_the_tests/py.typed"]
 
 classifiers = [
-        "Programming Language :: Python :: 3",
-        "Topic :: Software Development :: Testing",
-        "Topic :: Software Development :: Libraries",
-	    "Topic :: Utilities",
-        "Operating System :: OS Independent",
-        "Natural Language :: English",
-        "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
 ]
-
-[tool.pylint.basic]
-good-names = "ii,jj,kk,ex,_"
-init-hook = """
-from pylint.config import find_pylintrc; from pathlib import Path; import sys;
-project_dir = Path(find_pylintrc()).parent;
-sys.path.append(Path(project_dir, "src"))"""
-
-ignore = "build, dist"
-
-[tool.pylint.messages_control]
-[tool.pylint.'MESSAGES CONTROL']
-disable = """bad-continuation, missing-module-docstring, missing-function-docstring,
-missing-class-docstring"""
-
-[tool.pylint.format]
-max-line-length = "100"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/gkedge/run-all-the-tests/issues"
@@ -53,6 +36,29 @@ pylint = "~2.*"
 pytest = "~5.*"
 pytest-dependency = "^0.5.1"
 wheel = "tox-wheel"
+wrapt = "^1.12.1"
+
+[tool.pylint.master]
+good-names = "ii,jj,kk,ex,_"
+init-hook = """
+    from pylint.config import find_pylintrc; from pathlib import Path; import sys;
+    project_dir = Path(find_pylintrc()).parent;
+    sys.path.append(Path(project_dir, "src"))
+"""
+
+ignore = "build, dist, .venv"
+
+[tool.pylint.format]
+max-line-length = "100"
+
+[tool.pylint.messages_control]
+disable = """
+        bad-continuation,
+        missing-module-docstring,
+        missing-function-docstring,
+        missing-class-docstring,
+        too-many-nested-blocks
+"""
 
 [tool.isort]
 profile = "black"
