@@ -48,6 +48,4 @@ def test_only_script_types():
 @pytest.mark.dependency(depends=["test_all_test_types", "test_only_pytest_types"])
 def test_is_only_pytest_types():
     assert not TestType.is_only_pytest_types(TestType.all_test_types)
-    assert TestType.is_only_pytest_types(
-        TestType.only_pytest_types(TestType.all_test_types)
-    )
+    assert TestType.is_only_pytest_types(TestType.only_pytest_types(TestType.all_test_types))

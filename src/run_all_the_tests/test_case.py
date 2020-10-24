@@ -49,16 +49,11 @@ class TestCasePath:
 
     @property
     def is_test_case(self) -> bool:
-        return (
-            self.full_test_case_path.stem.startswith("test_") or self.is_dir_test_case
-        )
+        return self.full_test_case_path.stem.startswith("test_") or self.is_dir_test_case
 
     @property
     def is_script(self) -> bool:
-        return (
-            self.full_test_case_path.stem.startswith("run_")
-            and not self.is_dir_test_case
-        )
+        return self.full_test_case_path.stem.startswith("run_") and not self.is_dir_test_case
 
     def check_test_case_path(self) -> None:
         full_test_case_path: Path = self.full_test_case_path
@@ -142,17 +137,13 @@ class TestType(Enum, metaclass=TestTypeProperties):
     def only_pytest_types(
         original_types: FrozenSet["TestType"],
     ) -> FrozenSet["TestType"]:
-        return frozenset(
-            test_type for test_type in original_types if test_type.is_pytest
-        )
+        return frozenset(test_type for test_type in original_types if test_type.is_pytest)
 
     @staticmethod
     def only_script_types(
         original_types: FrozenSet["TestType"],
     ) -> FrozenSet["TestType"]:
-        return frozenset(
-            test_type for test_type in original_types if test_type.is_python
-        )
+        return frozenset(test_type for test_type in original_types if test_type.is_python)
 
     @staticmethod
     def is_only_pytest_types(original_types: FrozenSet["TestType"]) -> bool:

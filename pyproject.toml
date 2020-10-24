@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "run-all-the-tests"
-version = "0.1.19"
+version = "0.1.21"
 authors = ["Greg Kedge <gregwork@kedges.com>"]
 description = "Make sure both 'python -m pytest' and 'pytest' run your tests."
 readme = "README.md"
@@ -8,7 +8,7 @@ homepage = "https://github.com/gkedge/run-all-the-tests"
 repository = "https://github.com/gkedge/run-all-the-tests"
 license = "MIT"
 keywords = ["testing", "import", "sys.path", "packaging", "dependency", "pyproject.toml"]
-include = ["docs/**/*"]
+include = ["docs/**/*", "src/run_all_the_tests/py.typed"]
 
 
 classifiers = [
@@ -53,6 +53,7 @@ testpaths = [
 [tool.isort] # https://github.com/timothycrosley/isort/wiki/isort-Settings#full-reference-of-isort-settings
 # Compatibility with Black (https://black.readthedocs.io/en/stable/the_black_code_style.html#how-black-wraps-lines)
 # Style ---------------------
+profile = 'black'
 line_length = 100
 wrap_length = 100
 multi_line_output = 3
@@ -148,6 +149,12 @@ ignore-patterns = '''
     # Add additional patterns here:
     |\.idea
 '''
+init-hook = """
+    from pylint.config import find_pylintrc; from pathlib import Path; import sys;
+    project_dir = Path(find_pylintrc()).parent;
+    sys.path.append(Path(project_dir, "src"));
+"""
+
 
 [tool.pylint.message_control]
 confidence = "HIGH, INFERENCE, INFERENCE_FAILURE, UNDEFINED"
@@ -299,33 +306,33 @@ reports = "yes"   # Not availalbe with multiple jobs
 score = "no"      # Not availalbe with multiple jobs
 evaluation = "10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)"
 
-[black]
+[tool.black]
 line-length = 100
-target-version = ["py37|py38"]
+target-version = ['py37', 'py38']
 
 include = '\.pyi?$' # Default
 exclude = '''
-# Directory exclusions
-/(,
-  # Defaults:
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  # Add additional patterns here:
-  | \.idea
-)/
-| # File exclusions
-/(
-  # Add additional file patterns here:
-  # my_file\.py
-)
+    # Directory exclusions
+    /(,
+      # Defaults:
+      \.eggs
+      | \.git
+      | \.hg
+      | \.mypy_cache
+      | \.tox
+      | \.venv
+      | _build
+      | buck-out
+      | build
+      | dist
+      # Add additional patterns here:
+      | \.idea
+    )/
+    | # File exclusions
+#    /(
+      # Add additional file patterns here:
+      # my_file\.py
+#    )
 '''
 
 [build-system]

@@ -18,9 +18,7 @@ def test_test_case_relative_to_project_root(test_case_path, test_path):
 
 
 def test_test_case_relative_to(project_path, test_path, test_case_path):
-    assert test_case_path.test_case_relative_to(project_path / test_path) == PurePath(
-        "."
-    )
+    assert test_case_path.test_case_relative_to(project_path / test_path) == PurePath(".")
 
 
 def test_test_case_relative_to_project(project_path, test_path, test_case_path):

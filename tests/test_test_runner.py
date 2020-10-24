@@ -15,9 +15,7 @@ def test__get_group_tests(test_case, test_script_case):
 
 
 def test__run_test(project_path, test_case):
-    running_test_case: _RunningTestCase = _run_test(
-        TestType.PYTEST, Path.cwd(), test_case
-    )
+    running_test_case: _RunningTestCase = _run_test(TestType.PYTEST, Path.cwd(), test_case)
     assert running_test_case.group == Group.ONE
     assert running_test_case.test_type == TestType.PYTEST
     assert running_test_case.cwd.relative_to(project_path)

@@ -25,16 +25,12 @@ def test__is_script(test_case, test_script_case):
 # pylint: enable:protected-access
 
 
-@pytest.mark.parametrize(
-    "test_type", TestType.only_pytest_types(TestType.all_test_types)
-)
+@pytest.mark.parametrize("test_type", TestType.only_pytest_types(TestType.all_test_types))
 def test_python_command_for_pytests(test_type, test_case):
     assert test_case.python_command(test_type) == test_type.python_command
 
 
-@pytest.mark.parametrize(
-    "test_type", TestType.only_script_types(TestType.all_test_types)
-)
+@pytest.mark.parametrize("test_type", TestType.only_script_types(TestType.all_test_types))
 def test_python_command_for_scripts(test_type, test_script_case):
     assert test_script_case.python_command(test_type) == test_type.python_command
 

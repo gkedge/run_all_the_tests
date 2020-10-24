@@ -19,9 +19,7 @@ from run_all_the_tests.test_case import Group, TestType, TestCase
 ENV: Dict[str, str] = os.environ.copy()
 ENV.update({"PYTHONDONTWRITEBYTECODE": "-1"})
 
-POpenArgs = NewType(
-    "POpenArgs", Union[bytes, str, Sequence[Union[bytes, str, PathLike]]]
-)
+POpenArgs = NewType("POpenArgs", Union[bytes, str, Sequence[Union[bytes, str, PathLike]]])
 
 
 class _RunningTestCase(NamedTuple):
@@ -73,12 +71,8 @@ def _run_test(
     if not command:
         return None
 
-    cwd_relative_to_test_case_project: PurePath = test_case.cwd_relative_to_project(
-        work_directory
-    )
-    test_case_relative_to_cwd: PurePath = test_case.test_case_relative_to_cwd(
-        work_directory
-    )
+    cwd_relative_to_test_case_project: PurePath = test_case.cwd_relative_to_project(work_directory)
+    test_case_relative_to_cwd: PurePath = test_case.test_case_relative_to_cwd(work_directory)
     print(
         f"Starting: {command} {test_case_relative_to_cwd} from {cwd_relative_to_test_case_project}"
     )
@@ -103,9 +97,7 @@ def _run_test(
     )
 
 
-def _get_group_tests(
-    test_cases: Tuple[TestCase, ...], group: Group
-) -> Tuple[TestCase, ...]:
+def _get_group_tests(test_cases: Tuple[TestCase, ...], group: Group) -> Tuple[TestCase, ...]:
     return tuple(tcp for tcp in test_cases if group == tcp.group)
 
 
@@ -117,6 +109,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
 
     # Start all tests
     for group in Group:
+        print(f"Starting group: {group}")
         for test_case in _get_group_tests(test_cases, group):
             # ... over all test_case types
             test_type_count = len(TestType.all_test_types) - 1
@@ -129,9 +122,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                 working_directory_count = len(working_directories)
                 for working_directory in working_directories:
                     working_directory_count -= 1
-                    running_test_case = _run_test(
-                        test_type, working_directory, test_case
-                    )
+                    running_test_case = _run_test(test_type, working_directory, test_case)
 
                     if running_test_case:
                         test_count += 1
@@ -139,10 +130,8 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
                             test_case.is_wait_between_test_types
                             and (test_type_count > 0 or working_directory_count > 0)
                         ):
-                            print("Waiting...")
-                            tests_passed = report_on_test(
-                                running_test_case, tests_passed
-                            )
+                            print(f"Waiting on {test_case}...")
+                            tests_passed = report_on_test(running_test_case, tests_passed)
                         else:
                             running_test_cases.append(running_test_case)
 
@@ -153,9 +142,7 @@ def run_all_tests(test_cases: Tuple[TestCase, ...] = tuple()) -> None:
         running_test_cases.clear()
 
     if tests_passed == test_count:
-        print(
-            f"\nAll {test_count} tests passed! ({time.perf_counter() - start_time}sec)"
-        )
+        print(f"\nAll {test_count} tests passed! ({time.perf_counter() - start_time}sec)")
     else:
         print(
             f"\n{tests_passed} tests out of {test_count} passed "
